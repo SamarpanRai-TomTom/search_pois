@@ -18,8 +18,6 @@ def register_pipelines() -> Dict[str, Pipeline]:
     return {
         '__default__': ppl["prepare_ppl"] +
                     ppl['split_ppl'] +
-                    ppl["rev_geo_ppl"] +
                     ppl["query_bing"],
         'reverse_geo': ppl["rev_geo_ppl"],
-        'query_bing': ppl["query_bing"]
         }

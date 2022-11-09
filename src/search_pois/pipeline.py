@@ -32,6 +32,17 @@ def create_pipeline(**kwargs):
         ]
     )
 
+    query_bing = Pipeline(
+        [
+            node(
+                func=get_bing_result,
+                inputs=["searches_fail_poi", "parameters"],
+                outputs=["searches_fail_poi_with_bing"],
+                name="get_bing_result",
+            ),
+            ]
+            )
+
     rev_geo_ppl = Pipeline(
         [
             node(
@@ -56,17 +67,8 @@ def create_pipeline(**kwargs):
         ]
     )
 
-    query_bing = Pipeline(
-        [
-            node(
-                func=get_bing_result,
-                inputs=["searches_fail_poi", "parameters"],
-                outputs=["searches_fail_poi_with_bing"],
-                name="get_bing_result",
-            ),
-            ]
-            )
-            
+
+
     return {
             'prepare_ppl': prepare_ppl,
             'split_ppl': split_ppl,
