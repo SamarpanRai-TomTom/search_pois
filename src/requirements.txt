@@ -17,3 +17,4 @@ seaborn
 geopy
 sentence_transformers
 scipy
+azure-cognitiveservices-search-websearch
