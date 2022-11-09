@@ -6,7 +6,7 @@ poi_proba_threshold: 0.8
 
 cols_to_encode: ['query','poiName','streetName']
 
-min_delay_seconds: 0.2
+min_delay_seconds: 0.5
 
 col_rev_geo: reverse_location
 

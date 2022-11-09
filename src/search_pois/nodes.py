@@ -47,6 +47,10 @@ def prepare_data(df, params):
     lambda row: 1 - spatial.distance.cosine(
         row[f'{ref_col}_encoded'], row[f'{col_name}_encoded']), axis=1)
 
+    for col in cols_to_encode:
+        df = df.drop(f'{col}_encoded',axis=1)
+
+
     df.loc[:, 'num_comma_all_queries'] = (
         df.loc[:, 'all_queries'].apply(
             lambda qlist: [
@@ -123,7 +127,7 @@ def filter_rev_geocode(df, params):
     df = df[~df[col_geo].str.match(regex_starts_with_digit)]
 
     count = len(df)
-    log.info(f'Count after removing reverse geocoding starting with number {count}')
+    log.info(f'Count for FAIL POIs after removing reverse geocoding starting with number {count}')
 
     transformer = _get_encoder_model()
 
@@ -131,7 +135,7 @@ def filter_rev_geocode(df, params):
     df = _encode_string(df, 'query',transformer)
     df = _encode_string(df, 'reverse_location',transformer)
 
-    df[f'sim_query_{col_geo}'] = df.apply(
+    df.loc[:, f'sim_query_{col_geo}'] = df.apply(
         lambda row: 1 - spatial.distance.cosine(
         row[f'query_encoded'], row[f'{col_geo}_encoded']), axis=1)
 
@@ -140,15 +144,14 @@ def filter_rev_geocode(df, params):
         .str.strip()
     )
 
+    df = df.drop(['query_encoded',f'{col_geo}_encoded'],axis=1)
+
     count = len(df)
     log.info(f'Count before filtering by country is {count}')
 
     df = df[df['country_query']==params['country']]
     count = len(df)
     log.info(f'Count after filtering by country is {count}')
-
-
-
 
     osm_better = df[
         df['sim_query_reverse_location']>df['sim_query_poiName']
