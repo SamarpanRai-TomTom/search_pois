@@ -223,18 +223,22 @@ def search(client, query: str, latitude: str = None, longitude: str = None):
     if latitude and longitude:
         location = f"lat={latitude};long={longitude}"
     response = client.web.search(query, location)
+    
+    if response.web_pages is not None:
+        parsed_result = [(result.url, result.name) if result is not None else None for result in response.web_pages.value]
 
-    parsed_result = [(result.url, result.name) for result in response.web_pages.value]
+        # Remove duplicates
+        duplicated_removed = list(set(parsed_result))
 
-    # Remove duplicates
-    duplicated_removed = list(set(parsed_result))
-
-    # Remove blocked items|
-    duplicated_removed = list(
-        filter(
-            lambda x: not any([item in x[0] for item in BLOCK_LIST]), duplicated_removed
+     # Remove blocked items|
+        duplicated_removed = list(
+            filter(
+                lambda x: not any([item in x[0] for item in BLOCK_LIST]), duplicated_removed
+         )
         )
-    )
+    else:
+        duplicated_removed = None
+
 
     return duplicated_removed
 
