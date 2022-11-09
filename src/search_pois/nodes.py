@@ -46,8 +46,9 @@ def prepare_data(df, params):
     ref_col = cols_to_encode[0]
     for col_name in cols_to_encode[1:]:
         df[f'sim_{ref_col}_{col_name}'] = df.apply(
-    lambda row: 1 - spatial.distance.cosine(
-        row[f'{ref_col}_encoded'], row[f'{col_name}_encoded']), axis=1)
+        lambda row: _compute_similarity(row[f'{ref_col}_encoded'], row[f'{col_name}_encoded']),
+        axis=1
+        )
 
     for col in cols_to_encode:
         df = df.drop(f'{col}_encoded',axis=1)
@@ -137,9 +138,12 @@ def filter_rev_geocode(df, params):
     df = _encode_string(df, 'query', transformer)
     df = _encode_string(df, 'reverse_location', transformer)
 
+    
+
     df.loc[:, f'sim_query_{col_geo}'] = df.apply(
-        lambda row: 1 - spatial.distance.cosine(
-        row[f'query_encoded'], row[f'{col_geo}_encoded']), axis=1)
+        lambda row: _compute_similarity(row[f'query_encoded'], row[f'{col_geo}_encoded']),
+         axis=1
+         )
 
     df.loc[:, 'country_query'] = (
         df['reverse_geocode'].apply(lambda x: x.split(',')[-1])
@@ -184,15 +188,7 @@ BLOCK_LIST = [
     "google.com",
 ]
 
-def _create_bing_client(subscription_key):
-    if not subscription_key:
-        raise RuntimeError("Please specify SUBSCRIPTION_KEY as environment variable")
-# Instantiate the client and replace with your endpoint.
-    client = WebSearchClient(
-        endpoint="https://poi-bing-search.cognitiveservices.azure.com/",
-        credentials=CognitiveServicesCredentials(subscription_key),
-    )
-    return client
+
 
 def get_bing_result(df, params):
     bing_key = params['bing_key']
@@ -223,7 +219,7 @@ def search(client, query: str, latitude: str = None, longitude: str = None):
     if latitude and longitude:
         location = f"lat={latitude};long={longitude}"
     response = client.web.search(query, location)
-    
+
     if response.web_pages is not None:
         parsed_result = [(result.url, result.name) if result is not None else None for result in response.web_pages.value]
 
@@ -255,3 +251,17 @@ def _encode_string(df, col_name, transformer):
         lambda sentence: transformer.encode(str(sentence)) if sentence is not None else None
         )
     return df
+
+def _create_bing_client(subscription_key):
+    if not subscription_key:
+        raise RuntimeError("Please specify SUBSCRIPTION_KEY as environment variable")
+# Instantiate the client and replace with your endpoint.
+    client = WebSearchClient(
+        endpoint="https://poi-bing-search.cognitiveservices.azure.com/",
+        credentials=CognitiveServicesCredentials(subscription_key),
+    )
+    return client
+
+def _compute_similarity(stringA_encoded, stringB_encoded):
+        sim = 1 - spatial.distance.cosine(stringA_encoded, stringB_encoded)
+        return sim
