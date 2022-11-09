@@ -1,0 +1,13 @@
+cols: ['sessionId','all_queries','query','poi_proba','location','user_latlon','featureVector','type',
+        'success','accepted','clicked_rank','poiName','rank',
+        'address','streetName']
+
+poi_proba_threshold: 0.8
+
+cols_to_encode: ['query','poiName','streetName']
+
+min_delay_seconds: 0.2
+
+col_rev_geo: reverse_location
+
+country: 'United States'
