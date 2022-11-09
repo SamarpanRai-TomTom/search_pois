@@ -8,6 +8,7 @@ from search_pois import pipeline
 
 ppl = pipeline.create_pipeline()
 
+
 def register_pipelines() -> Dict[str, Pipeline]:
     """Register the project's pipelines.
 
@@ -16,9 +17,7 @@ def register_pipelines() -> Dict[str, Pipeline]:
     """
 
     return {
-        '__default__': ppl["prepare_ppl"] +
-                    ppl['split_ppl'] +
-                    ppl["query_bing"],
-        'reverse_geo': ppl["rev_geo_ppl"],
-        'query_bing': ppl["query_bing"]
-        }
+        "__default__": ppl["prepare_ppl"] + ppl["split_ppl"] + ppl["query_bing"],
+        "reverse_geo": ppl["rev_geo_ppl"],
+        "query_bing": ppl["query_bing"],
+    }

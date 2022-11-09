@@ -1,6 +1,12 @@
 from kedro.pipeline import Pipeline, node, pipeline
 
-from .nodes import filter_rev_geocode, get_bing_result, prepare_data, reverse_geocode, split_data
+from .nodes import (
+    filter_rev_geocode,
+    get_bing_result,
+    prepare_data,
+    reverse_geocode,
+    split_data,
+)
 
 
 def create_pipeline(**kwargs):
@@ -25,8 +31,8 @@ def create_pipeline(**kwargs):
                     "fail": "searches_fail",
                     "success": "searches_success",
                     "fail_poi": "searches_fail_poi",
-                    "success_addr": "searches_success_addr"
-                    },
+                    "success_addr": "searches_success_addr",
+                },
                 name="split",
             ),
         ]
@@ -40,8 +46,8 @@ def create_pipeline(**kwargs):
                 outputs=["searches_fail_poi_with_bing"],
                 name="get_bing_result",
             ),
-            ]
-            )
+        ]
+    )
 
     rev_geo_ppl = Pipeline(
         [
@@ -53,25 +59,19 @@ def create_pipeline(**kwargs):
             ),
             node(
                 func=filter_rev_geocode,
-                inputs=[
-                    "searches_fail_poi_with_rev_geo",
-                    "parameters"
-                    ],
+                inputs=["searches_fail_poi_with_rev_geo", "parameters"],
                 outputs={
                     "all": "searches_fail_poi_result",
-                    "osm_better": "searches_osm_better"
+                    "osm_better": "searches_osm_better",
                 },
                 name="filter_rev_geocode",
             ),
-
         ]
     )
 
-
-
     return {
-            'prepare_ppl': prepare_ppl,
-            'split_ppl': split_ppl,
-            'query_bing': query_bing,
-            'rev_geo_ppl': rev_geo_ppl
+        "prepare_ppl": prepare_ppl,
+        "split_ppl": split_ppl,
+        "query_bing": query_bing,
+        "rev_geo_ppl": rev_geo_ppl,
     }
