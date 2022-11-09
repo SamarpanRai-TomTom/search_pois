@@ -1,6 +1,6 @@
 from kedro.pipeline import Pipeline, node, pipeline
 
-from .nodes import filter_rev_geocode, prepare_data, reverse_geocode, split_data
+from .nodes import filter_rev_geocode, get_bing_result, prepare_data, reverse_geocode, split_data
 
 
 def create_pipeline(**kwargs):
@@ -36,7 +36,7 @@ def create_pipeline(**kwargs):
         [
             node(
                 func=reverse_geocode,
-                inputs=["searches_fail_poi", "parameters"],
+                inputs=["searches_fail_poi_with_bing", "parameters"],
                 outputs=["searches_fail_poi_with_rev_geo"],
                 name="reverse_geocode",
             ),
@@ -56,8 +56,20 @@ def create_pipeline(**kwargs):
         ]
     )
 
+    query_bing = Pipeline(
+        [
+            node(
+                func=get_bing_result,
+                inputs=["searches_fail_poi", "parameters"],
+                outputs=["searches_fail_poi_with_bing"],
+                name="get_bing_result",
+            ),
+            ]
+            )
+            
     return {
             'prepare_ppl': prepare_ppl,
             'split_ppl': split_ppl,
+            'query_bing': query_bing,
             'rev_geo_ppl': rev_geo_ppl
     }

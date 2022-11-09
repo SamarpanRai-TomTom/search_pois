@@ -19,6 +19,16 @@ searches_fail_poi:
     sep: ;
     encoding: utf-8
 
+searches_fail_poi_with_bing:
+  type: pandas.CSVDataSet
+  filepath: data/03_primary/searches_fail_poi_with_bing.csv
+  load_args:
+    sep: ;
+    encoding: utf-8
+  save_args:
+    sep: ;
+    encoding: utf-8
+
 searches_success_addr:
   type: pandas.CSVDataSet
   filepath: data/02_intermediate/searches_success_addr.csv

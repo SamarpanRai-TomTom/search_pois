@@ -11,3 +11,5 @@ min_delay_seconds: 0.5
 col_rev_geo: reverse_location
 
 country: 'United States'
+
+#bing_key: 'dummy'
