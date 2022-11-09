@@ -2,3 +2,5 @@
 """
 
 __version__ = "0.1"
+
+from .search import BingSearch, HotelSearch
